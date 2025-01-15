@@ -27,7 +27,7 @@ describe('TextQuestionEditAnswerFormComponent', () => {
       shouldAllowRichText: false,
       questionType: FeedbackQuestionType.TEXT,
       questionText: 'Sample question',
-      recommendedLength: 50,
+      recommendedLength: 10,
     };
     component.responseDetails = { answer: '', questionType: FeedbackQuestionType.TEXT };
     fixture.detectChanges();
@@ -51,5 +51,32 @@ describe('TextQuestionEditAnswerFormComponent', () => {
     fixture.detectChanges();
 
     expect(component.decodedAnswer).toBe("It's a test");
+  });
+
+  describe('isWordCountWithinRecommendedBound', () => {
+    beforeEach(() => {
+      component.questionDetails.recommendedLength = 10;
+    });
+
+    it('should return true if word count is within the recommended bounds', () => {
+      component.responseDetails.answer = 'I have exacltly ten words therefore am inside all limits.';
+      fixture.detectChanges();
+
+      expect(component.isWordCountWithinRecommendedBound).toBe(true);
+    });
+
+    it('should return false if word count is above the upper limit', () => {
+      component.responseDetails.answer = 'Im too big and unfortunately am exeeding some of the upper limits.';
+      fixture.detectChanges();
+
+      expect(component.isWordCountWithinRecommendedBound).toBe(false);
+    });
+
+    it('should return false if word count is below the lower limit (C2 = F, C3 = V)', () => {
+      component.responseDetails.answer = 'Too short.';
+      fixture.detectChanges();
+
+      expect(component.isWordCountWithinRecommendedBound).toBe(false);
+    });
   });
 });
